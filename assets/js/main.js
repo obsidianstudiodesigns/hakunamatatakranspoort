@@ -58,7 +58,7 @@
     lenis && lenis.stop();
     if (hasGsap && !reduce) {
       gsap.fromTo(menu, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 0.7, ease: "expo.out" });
-      gsap.fromTo($$(".menu__links a, .menu__foot", menu), { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: "expo.out", delay: 0.1 });
+      gsap.fromTo($$(".menu__links a, .menu__foot", menu), { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: "expo.out", delay: 0.1 });
     }
   }
   function closeMenu() {
@@ -75,18 +75,15 @@
   /* ---------- nav state + WhatsApp button ---------- */
   const nav = $("[data-nav]");
   const fab = $("[data-fab]");
-  const hero = $(".hero");
+  const hero = $("[data-hero]");
   if (hasGsap) {
-    ScrollTrigger.create({
-      trigger: hero,
-      start: "bottom top+=80",
-      onEnter: () => { nav.classList.add("is-solid"); fab.classList.add("is-in"); },
-      onLeaveBack: () => { nav.classList.remove("is-solid"); fab.classList.remove("is-in"); },
-    });
     ScrollTrigger.create({
       start: 0, end: "max",
       onUpdate: (self) => {
-        const past = self.scroll() > window.innerHeight * 0.6;
+        const y = self.scroll();
+        nav.classList.toggle("is-solid", y > hero.offsetHeight * 0.92);
+        fab.classList.toggle("is-in", y > window.innerHeight * 0.9);
+        const past = y > window.innerHeight * 1.2;
         nav.classList.toggle("is-hidden", past && self.direction === 1 && !document.body.classList.contains("menu-open"));
       },
     });
@@ -94,16 +91,28 @@
     nav.classList.add("is-solid"); fab.classList.add("is-in");
   }
 
-  /* ---------- hero: cinematic frame sequence ---------- */
+  /* ---------- hero: arch window that opens to full screen ---------- */
+  const media = $("[data-hero-media]");
+  const slot = $("[data-slot]");
+  const FULL = "inset(0px 0px 0px 0px round 0px 0px 0px 0px / 0px 0px 0px 0px)";
+  function archClip(collapsed) {
+    const h = hero.getBoundingClientRect();
+    const s = slot.getBoundingClientRect();
+    const t = s.top - h.top, l = s.left - h.left, r = h.right - s.right, b = Math.max(0, h.bottom - s.bottom);
+    const rx = s.width / 2, ry = Math.min(s.height * 0.42, s.width / 2);
+    const top = collapsed ? t + s.height : t;
+    return `inset(${top}px ${r}px ${b}px ${l}px round ${rx}px ${rx}px 0px 0px / ${ry}px ${ry}px 0px 0px)`;
+  }
+
+  // cinematic frame sequence inside the window
   const frames = $$("[data-frame]");
   const bars = $$("[data-progress] i");
   const HOLD = 7;
   let current = 0;
   function kenBurns(frame) {
     const img = $("img", frame);
-    const fx = frame.dataset.fx || "0%";
-    const fy = frame.dataset.fy || "0%";
-    gsap.fromTo(img, { scale: 1.16, xPercent: parseFloat(fx), yPercent: parseFloat(fy) }, { scale: 1.03, xPercent: 0, yPercent: 0, duration: HOLD + 2.4, ease: "none" });
+    gsap.fromTo(img, { scale: 1.16, xPercent: parseFloat(frame.dataset.fx || 0), yPercent: parseFloat(frame.dataset.fy || 0) },
+      { scale: 1.03, xPercent: 0, yPercent: 0, duration: HOLD + 2.4, ease: "none" });
   }
   function markBars(i) {
     bars.forEach((b, n) => {
@@ -125,9 +134,9 @@
     kenBurns(next);
     markBars(current);
   }
-  if (hasGsap && !reduce && frames.length > 1) {
+
+  if (hasGsap && !reduce) {
     frames.forEach((f, i) => gsap.set(f, { opacity: i === 0 ? 1 : 0 }));
-    // warm the other frames after first paint
     window.addEventListener("load", () => frames.slice(1).forEach((f) => { $("img", f).loading = "eager"; }));
     kenBurns(frames[0]);
     markBars(0);
@@ -136,91 +145,33 @@
       clearInterval(timer);
       if (!document.hidden) timer = setInterval(nextFrame, HOLD * 1000);
     });
-  }
 
-  /* hero intro choreography */
-  if (hasGsap && !reduce) {
-    const tl = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.15 });
-    tl.from(".hero__media", { scale: 1.08, duration: 2.6, ease: "power3.out" }, 0)
-      .from(".hero__title .w > span", { yPercent: 110, duration: 1.4, stagger: 0.08 }, 0.25)
-      .from("[data-hero-in]", { y: 24, opacity: 0, duration: 1.2, stagger: 0.12 }, 0.55)
+    // load: the window rises like the sun, the masthead slides up
+    const intro = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.1 });
+    intro.fromTo(media, { clipPath: () => archClip(true) }, { clipPath: () => archClip(false), duration: 1.8, ease: "expo.inOut" }, 0)
+      .from(".hero__mark-line > span", { yPercent: 105, duration: 1.4, stagger: 0.1 }, 0.2)
+      .from("[data-hero-copy] > *", { y: 26, opacity: 0, duration: 1.1, stagger: 0.1 }, 0.7)
       .from(".nav__inner", { opacity: 0, duration: 1.2, ease: "power2.out" }, 0.6);
 
-    gsap.to("[data-hero-media]", { yPercent: 12, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true } });
-    gsap.to("[data-hero-content]", { yPercent: -18, opacity: 0, ease: "none", scrollTrigger: { trigger: hero, start: "35% top", end: "bottom top", scrub: true } });
+    // scroll: the arch opens out to full screen and the warthog pops in
+    const open = gsap.timeline({
+      scrollTrigger: {
+        trigger: hero, start: "top top", end: () => "+=" + window.innerHeight * 1.1,
+        pin: true, scrub: 1, invalidateOnRefresh: true,
+        onUpdate: (self) => nav.classList.toggle("is-over", self.progress > 0.4),
+        onRefresh: (self) => { if (self.progress === 0 && !intro.isActive()) gsap.set(media, { clipPath: archClip(false) }); },
+      },
+    });
+    open.fromTo(media, { clipPath: () => archClip(false) }, { clipPath: FULL, ease: "power2.inOut", duration: 1, immediateRender: false }, 0)
+      .to("[data-mark], [data-hero-copy]", { y: -60, opacity: 0, duration: 0.45, ease: "power1.in" }, 0)
+      .to("[data-hero-shade]", { opacity: 1, duration: 0.5 }, 0.45)
+      .fromTo("[data-sticker]", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)", immediateRender: false }, 0.68)
+      .to({}, { duration: 0.2 });
+  } else {
+    const place = () => (media.style.clipPath = archClip(false));
+    place();
+    addEventListener("resize", place);
   }
-
-  /* ---------- hero: backlit dust motes ---------- */
-  (function motes() {
-    const c = $("[data-motes]");
-    if (!c || reduce) return;
-    const ctx = c.getContext("2d");
-    let w, h, dpr, parts = [], running = false, raf, t = 0;
-    const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-    const sprite = document.createElement("canvas");
-    sprite.width = sprite.height = 64;
-    const sg = sprite.getContext("2d");
-    const grad = sg.createRadialGradient(32, 32, 0, 32, 32, 32);
-    grad.addColorStop(0, "rgba(255,236,196,1)");
-    grad.addColorStop(0.35, "rgba(255,214,150,.55)");
-    grad.addColorStop(1, "rgba(255,200,120,0)");
-    sg.fillStyle = grad; sg.fillRect(0, 0, 64, 64);
-
-    function resize() {
-      dpr = Math.min(devicePixelRatio || 1, 2);
-      w = c.clientWidth; h = c.clientHeight;
-      c.width = w * dpr; c.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(110, (w * h) / 14000));
-      parts = Array.from({ length: n }, () => make(true));
-    }
-    function make(anywhere) {
-      const z = Math.random();
-      const bokeh = Math.random() < 0.1;
-      return {
-        x: Math.random() * w,
-        y: anywhere ? Math.random() * h : h + 20,
-        z,
-        r: bokeh ? 10 + Math.random() * 22 : 1.2 + z * 3.4,
-        a: bokeh ? 0.05 + Math.random() * 0.07 : 0.25 + z * 0.55,
-        vx: 0.05 + z * 0.22,
-        vy: -(0.04 + z * 0.16),
-        ph: Math.random() * Math.PI * 2,
-        tw: 0.4 + Math.random() * 1.4,
-      };
-    }
-    function frame() {
-      t += 0.016;
-      mouse.x += (mouse.tx - mouse.x) * 0.04;
-      mouse.y += (mouse.ty - mouse.y) * 0.04;
-      ctx.clearRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter";
-      const sx = w * 0.12, sy = h * 0.05, reach = Math.max(w, h) * 0.75;
-      for (const p of parts) {
-        p.x += p.vx + Math.sin(t * 0.6 + p.ph) * 0.12 * p.z;
-        p.y += p.vy + Math.cos(t * 0.4 + p.ph) * 0.08;
-        if (p.x > w + 40) p.x = -40;
-        if (p.y < -40) Object.assign(p, make(false), { x: Math.random() * w });
-        const px = p.x + mouse.x * p.z * 18;
-        const py = p.y + mouse.y * p.z * 12;
-        const d = Math.hypot(px - sx, py - sy);
-        const light = 0.35 + 1.1 * Math.exp(-d / reach);
-        const flick = 0.65 + 0.35 * Math.sin(t * p.tw + p.ph);
-        ctx.globalAlpha = Math.min(1, p.a * light * flick);
-        const s = p.r * 2;
-        ctx.drawImage(sprite, px - p.r, py - p.r, s, s);
-      }
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
-      raf = requestAnimationFrame(frame);
-    }
-    const start = () => { if (!running) { running = true; raf = requestAnimationFrame(frame); } };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
-    resize();
-    addEventListener("resize", resize);
-    if (finePointer) hero.addEventListener("pointermove", (e) => { mouse.tx = e.clientX / w - 0.5; mouse.ty = e.clientY / h - 0.5; });
-    new IntersectionObserver(([en]) => (en.isIntersecting ? start() : stop())).observe(hero);
-  })();
 
   /* ---------- magnetic primary CTA ---------- */
   if (finePointer && !reduce && hasGsap) {
@@ -239,7 +190,6 @@
   /* ---------- scroll reveals ---------- */
   if (hasGsap && !reduce) {
     $$("[data-split]").forEach((el) => {
-      if (el.closest(".hero")) return;
       gsap.from($$(".w > span", el), {
         yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.06,
         scrollTrigger: { trigger: el, start: "top 85%", once: true },
@@ -256,8 +206,8 @@
       });
     });
     $$("[data-clip]").forEach((el) => {
-      gsap.fromTo(el, { clipPath: "inset(18% 12% 18% 12% round 18px)" }, {
-        clipPath: "inset(0% 0% 0% 0% round 18px)", duration: 1.6, ease: "expo.out",
+      gsap.fromTo(el, { clipPath: "inset(100% 0% 0% 0%)" }, {
+        clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.inOut",
         scrollTrigger: { trigger: el, start: "top 85%", once: true },
       });
     });
@@ -267,38 +217,32 @@
         scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true },
       });
     });
+    $$("[data-zoom]").forEach((wrap) => {
+      gsap.fromTo($("[data-zoom-img]", wrap), { scale: 1.25 }, {
+        scale: 1, ease: "none",
+        scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom center", scrub: true },
+      });
+    });
   } else {
     $$("[data-reveal], [data-reveal-group] > *").forEach((el) => (el.style.opacity = 1));
   }
 
-  /* ---------- around: landscape eases into frame on scroll ---------- */
-  if (hasGsap && !reduce) {
-    $$("[data-zoom]").forEach((wrap) => {
-      gsap.fromTo($("[data-zoom-img]", wrap), { scale: 1.22, yPercent: -4 }, {
-        scale: 1, yPercent: 4, ease: "none",
-        scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom top", scrub: true },
-      });
+  /* ---------- outdoors: sticky photo follows the space in view ---------- */
+  const spaces = $$("[data-space]");
+  const spaceImgs = $$("[data-space-img]");
+  function showSpace(i) {
+    spaces.forEach((s) => s.classList.toggle("is-on", s.dataset.space === String(i)));
+    spaceImgs.forEach((im) => {
+      const on = im.dataset.spaceImg === String(i);
+      if (on) im.loading = "eager";
+      im.classList.toggle("is-on", on);
     });
   }
-
-  /* ---------- outdoors: pinned horizontal pan on desktop ---------- */
-  if (hasGsap && !reduce) {
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px)", () => {
-      const section = $("[data-pan]");
-      const track = $("[data-pan-track]");
-      const distance = () => track.scrollWidth - window.innerWidth;
-      const pan = gsap.to(track, {
-        x: () => -distance(), ease: "none",
-        scrollTrigger: { trigger: section, start: "top top", end: () => "+=" + distance(), pin: true, scrub: 1, invalidateOnRefresh: true },
-      });
-      $$(".panel__img img", track).forEach((img) => {
-        gsap.fromTo(img, { xPercent: -8 }, {
-          xPercent: 0, ease: "none",
-          scrollTrigger: { trigger: img.parentElement, containerAnimation: pan, start: "left right", end: "right left", scrub: true },
-        });
-      });
-    });
+  if (hasGsap) {
+    spaces.forEach((s) => ScrollTrigger.create({
+      trigger: s, start: "top 60%", end: "bottom 60%",
+      onToggle: (self) => self.isActive && showSpace(s.dataset.space),
+    }));
   }
 
   /* ---------- wildlife strips ---------- */
@@ -312,13 +256,13 @@
     if (finePointer) s.addEventListener("pointerenter", () => openStrip(s));
   });
 
-  /* ---------- nights: star field, shooting stars and boma embers ---------- */
-  (function nights() {
-    const section = $("[data-nights]");
+  /* ---------- dusk: sundowners to starlight ---------- */
+  (function dusk() {
+    const section = $("[data-dusk]");
     const c = $("[data-sky]");
-    if (!c) return;
+    if (!section || !c) return;
     const ctx = c.getContext("2d");
-    let w, h, dpr, stars = [], embers = [], band, raf, running = false, t = 0, angle = 0, shoot = null, nextShoot = 4;
+    let w, h, dpr, stars = [], band, raf, running = false, t = 0, angle = 0, shoot = null, nextShoot = 3;
 
     function resize() {
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -328,16 +272,14 @@
       const R = Math.hypot(w, h);
       const n = Math.round(Math.min(900, (w * h) / 1500));
       stars = Array.from({ length: n }, () => {
-        const m = Math.random();
         const tint = Math.random();
         return {
           x: (Math.random() - 0.5) * R * 1.6, y: (Math.random() - 0.5) * R * 1.6,
-          r: m < 0.93 ? 0.45 + Math.random() * 0.85 : 1.2 + Math.random() * 1.2,
+          r: Math.random() < 0.93 ? 0.45 + Math.random() * 0.85 : 1.2 + Math.random() * 1.2,
           a: 0.45 + Math.random() * 0.55, tw: 0.5 + Math.random() * 2.5, ph: Math.random() * 6.3,
           c: tint < 0.12 ? "255,214,170" : tint < 0.24 ? "190,210,255" : "255,255,255",
         };
       });
-      // faint galactic band, drawn once
       band = document.createElement("canvas");
       band.width = Math.ceil(R * 1.6); band.height = Math.ceil(R * 1.6);
       const b = band.getContext("2d");
@@ -355,19 +297,11 @@
         b.fillStyle = `rgba(255,255,255,${Math.random() * 0.35})`;
         b.fillRect(x, y, 0.8, 0.8);
       }
-      if (reduce) draw(0);
-    }
-    function ember() {
-      return {
-        x: w * (0.5 + (Math.random() - 0.5) * 0.36), y: h * (0.8 + Math.random() * 0.14),
-        vx: (Math.random() - 0.5) * 0.5, vy: -(0.7 + Math.random() * 1.5),
-        life: 0, max: 2.4 + Math.random() * 3.4, r: 0.8 + Math.random() * 1.7, ph: Math.random() * 6.3,
-      };
+      draw(0);
     }
     function draw(dt) {
       t += dt; angle += dt * 0.0035;
       ctx.clearRect(0, 0, w, h);
-      // rotate the sky around a pole above the frame, like a slow long exposure
       ctx.save();
       ctx.translate(w * 0.5, -h * 0.35);
       ctx.rotate(angle);
@@ -385,12 +319,10 @@
       ctx.restore();
       ctx.globalAlpha = 1;
       if (reduce) return;
-
-      // shooting star
       nextShoot -= dt;
       if (!shoot && nextShoot <= 0) {
         shoot = { x: w * (0.15 + Math.random() * 0.6), y: h * (0.05 + Math.random() * 0.25), vx: 9 + Math.random() * 5, vy: 3 + Math.random() * 3, life: 0 };
-        nextShoot = 6 + Math.random() * 9;
+        nextShoot = 5 + Math.random() * 8;
       }
       if (shoot) {
         shoot.life += dt;
@@ -403,28 +335,6 @@
         ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx - shoot.vx * 14, hy - shoot.vy * 14); ctx.stroke();
         if (k >= 1) shoot = null;
       }
-
-      // embers rising from the boma behind the trees
-      ctx.globalCompositeOperation = "lighter";
-      if (embers.length < 70 && Math.random() < 0.6) embers.push(ember());
-      embers = embers.filter((e) => {
-        e.life += dt;
-        if (e.life > e.max) return false;
-        e.vx += Math.sin(t * 1.7 + e.ph) * 0.02 + 0.004;
-        e.x += e.vx; e.y += e.vy; e.vy *= 0.997;
-        const k = e.life / e.max;
-        const heat = 1 - k;
-        const r = 255, g = Math.round(120 + 110 * heat), bl = Math.round(40 * heat);
-        const flick = 0.6 + 0.4 * Math.sin(t * 14 + e.ph);
-        ctx.globalAlpha = Math.max(0, (k < 0.1 ? k * 10 : 1) * heat * flick);
-        ctx.fillStyle = `rgb(${r},${g},${bl})`;
-        ctx.beginPath(); ctx.arc(e.x, e.y, e.r * (0.6 + heat * 0.6), 0, 6.283); ctx.fill();
-        ctx.globalAlpha *= 0.18;
-        ctx.beginPath(); ctx.arc(e.x, e.y, e.r * 4, 0, 6.283); ctx.fill();
-        return true;
-      });
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
     }
     let last = 0;
     function loop(now) {
@@ -435,15 +345,30 @@
     }
     resize();
     addEventListener("resize", resize);
-    if (reduce) return;
+
+    if (reduce || !hasGsap) {
+      $("[data-night]").style.opacity = 1;
+      c.style.opacity = 1;
+      $("[data-sun]").style.opacity = 0;
+      $("[data-dusk-one]").style.opacity = 0;
+      $("[data-dusk-two]").style.opacity = 1;
+      return;
+    }
     new IntersectionObserver(([en]) => {
       if (en.isIntersecting && !running) { running = true; last = 0; raf = requestAnimationFrame(loop); }
       else if (!en.isIntersecting) { running = false; cancelAnimationFrame(raf); }
     }, { rootMargin: "100px" }).observe(section);
 
-    if (hasGsap) {
-      gsap.fromTo(".nights__trees", { yPercent: 8 }, { yPercent: 0, ease: "none", scrollTrigger: { trigger: section, start: "top bottom", end: "bottom bottom", scrub: true } });
-    }
+    gsap.timeline({
+      scrollTrigger: { trigger: section, start: "top top", end: () => "+=" + window.innerHeight * 1.6, pin: true, scrub: 1, invalidateOnRefresh: true },
+    })
+      .to("[data-sun]", { y: () => window.innerHeight * 0.5, scale: 0.9, filter: "saturate(1.6) hue-rotate(-12deg)", ease: "power1.in", duration: 0.8 }, 0)
+      .to("[data-sun]", { opacity: 0, duration: 0.2 }, 0.65)
+      .to("[data-dusk-one]", { opacity: 0, y: -40, duration: 0.25 }, 0.3)
+      .to("[data-night]", { opacity: 1, duration: 0.5, ease: "none" }, 0.35)
+      .to(c, { opacity: 1, duration: 0.45, ease: "none" }, 0.55)
+      .fromTo("[data-dusk-two]", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 }, 0.72)
+      .to({}, { duration: 0.25 });
   })();
 
   /* ---------- lightbox ---------- */
