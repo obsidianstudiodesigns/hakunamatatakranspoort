@@ -271,6 +271,16 @@
     $$("[data-reveal], [data-reveal-group] > *").forEach((el) => (el.style.opacity = 1));
   }
 
+  /* ---------- around: landscape eases into frame on scroll ---------- */
+  if (hasGsap && !reduce) {
+    $$("[data-zoom]").forEach((wrap) => {
+      gsap.fromTo($("[data-zoom-img]", wrap), { scale: 1.22, yPercent: -4 }, {
+        scale: 1, yPercent: 4, ease: "none",
+        scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom top", scrub: true },
+      });
+    });
+  }
+
   /* ---------- outdoors: pinned horizontal pan on desktop ---------- */
   if (hasGsap && !reduce) {
     const mm = gsap.matchMedia();
@@ -438,10 +448,13 @@
 
   /* ---------- lightbox ---------- */
   const gallery = [
-    ["bedroom-main", "Main bedroom"], ["lounge", "Lounge"], ["kitchen", "Kitchen"],
-    ["bedroom-two", "Double bedroom"], ["dining", "Dining room"], ["bedroom-twin", "Bedroom with two beds"],
-    ["kitchenette", "Kitchenette"], ["suite-corner", "Coffee corner with bar fridge"],
-    ["deck-view", "The deck"], ["pool", "The pool"], ["house-front", "The house from Klapper Street"], ["bird-feeder", "Bird feeder on the deck"],
+    ["bedroom-main-2", "Main bedroom"], ["lounge-tall", "Lounge"], ["dining-arch", "Dining room"],
+    ["bedroom-two", "Double bedroom"], ["bunk-room", "Bunk room"], ["kitchen-lounge", "Kitchen and lounge"],
+    ["bedroom-three", "Double bedroom with garden view"], ["bedroom-twin", "Bedroom with two beds"], ["kitchen", "Kitchen"],
+    ["dining", "Dining table"], ["bathroom", "Bathroom with bath"], ["shower", "Shower room"],
+    ["kitchenette", "Kitchenette"], ["suite-corner", "Coffee corner with bar fridge"], ["lapa", "The lapa"],
+    ["deck-view", "The deck"], ["pool-floats", "The pool"], ["garden-pool", "Garden and pool"],
+    ["house-deck", "The house and upper deck"], ["lantern-path", "Lantern-lit path at night"], ["night-pool", "The house and pool at night"],
   ];
   const lb = $("[data-lightbox]");
   const lbImg = $("[data-lb-img]");

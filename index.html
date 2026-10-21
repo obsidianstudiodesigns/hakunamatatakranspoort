@@ -92,6 +92,7 @@
         <a href="#house">The house</a>
         <a href="#outdoors">Outdoors</a>
         <a href="#wildlife">Wildlife</a>
+        <a href="#reviews">Reviews</a>
         <a href="#rates">Rates</a>
         <a href="#location">Location</a>
       </nav>
@@ -107,6 +108,7 @@
       <a href="#house">The house</a>
       <a href="#outdoors">Outdoors</a>
       <a href="#wildlife">Wildlife</a>
+      <a href="#reviews">Reviews</a>
       <a href="#rates">Rates</a>
       <a href="#location">Location</a>
       <a href="#book">Book your stay</a>
@@ -125,13 +127,17 @@
           <source media="(max-width: 760px)" srcset="assets/img/hero-deck-sm.webp">
           <img src="assets/img/hero-deck.webp" alt="The wooden deck at Hakuna Matata looking over the bushveld at golden hour" fetchpriority="high">
         </picture>
+        <picture class="hero__frame" data-frame data-fx="1.5%" data-fy="1%">
+          <source media="(max-width: 760px)" srcset="assets/img/hero-river-sm.webp">
+          <img src="assets/img/hero-river.webp" alt="A river winding between the hills near Kranspoort" loading="lazy">
+        </picture>
         <picture class="hero__frame" data-frame data-fx="2%" data-fy="-1%">
           <source media="(max-width: 760px)" srcset="assets/img/hero-zebra-sm.webp">
           <img src="assets/img/hero-zebra.webp" alt="A zebra in the late afternoon light in Kranspoort" loading="lazy">
         </picture>
         <picture class="hero__frame" data-frame data-fx="-1.5%" data-fy="-1%">
           <source media="(max-width: 760px)" srcset="assets/img/hero-pool-sm.webp">
-          <img src="assets/img/hero-pool.webp" alt="The private pool under the pergola" loading="lazy">
+          <img src="assets/img/hero-pool.webp" alt="The private pool with loungers and pool rings" loading="lazy">
         </picture>
       </div>
       <div class="hero__sun" aria-hidden="true"></div>
@@ -148,7 +154,7 @@
           <a class="btn btn--glass" href="#house">See the house</a>
         </div>
       </div>
-      <div class="hero__progress" aria-hidden="true" data-progress><i></i><i></i><i></i></div>
+      <div class="hero__progress" aria-hidden="true" data-progress><i></i><i></i><i></i><i></i></div>
     </section>
 
     <!-- INTRO -->
@@ -171,7 +177,7 @@
             <img src="assets/img/house-trees.webp" alt="The wooden house at Hakuna Matata among the trees" loading="lazy" width="1050" height="1400" data-parallax="-8">
           </figure>
           <figure class="intro__small" data-clip>
-            <img src="assets/img/bird-feeder-sm.webp" alt="A wooden bird feeder on the deck railing" loading="lazy" width="800" height="600" data-parallax="6">
+            <img src="assets/img/coffee-pool-sm.webp" alt="Two coffee mugs on the edge of the pool under the shade sail" loading="lazy" width="600" height="800" data-parallax="6">
           </figure>
         </div>
       </div>
@@ -185,12 +191,12 @@
           <p class="body-lg" data-reveal>Wooden floors, high ceilings and calm, cool bedrooms. A full kitchen, a lounge to spread out in and a dining table made for long lunches.</p>
         </div>
         <div class="bento" data-reveal-group>
-          <button class="bento__cell bento__a" type="button" data-open="0" aria-label="View the main bedroom"><img src="assets/img/bedroom-main.webp" alt="Main bedroom with a double bed and ceiling fan" loading="lazy"></button>
-          <button class="bento__cell bento__b" type="button" data-open="1" aria-label="View the lounge"><img src="assets/img/lounge.webp" alt="Lounge with a corner couch, cowhide rug and kudu horns" loading="lazy"></button>
-          <button class="bento__cell bento__c" type="button" data-open="2" aria-label="View the kitchen"><img src="assets/img/kitchen-sm.webp" alt="The kitchen with sage green cupboards and wooden floors" loading="lazy"></button>
-          <button class="bento__cell bento__d" type="button" data-open="3" aria-label="View a bedroom"><img src="assets/img/bedroom-two-sm.webp" alt="Double bedroom with yellow cushions and a timber headboard" loading="lazy"></button>
-          <button class="bento__cell bento__e" type="button" data-open="4" aria-label="View the dining room"><img src="assets/img/dining-sm.webp" alt="Dining table with grey high-back chairs" loading="lazy"></button>
-          <button class="bento__cell bento__f" type="button" data-open="5" aria-label="View the twin bedroom"><img src="assets/img/bedroom-twin.webp" alt="Bedroom with two beds and a bar fridge" loading="lazy"></button>
+          <button class="bento__cell bento__a" type="button" data-open="0" aria-label="View the main bedroom"><img src="assets/img/bedroom-main-2.webp" alt="Main bedroom with a double bed, ceiling fan and built-in cupboards" loading="lazy"></button>
+          <button class="bento__cell bento__b" type="button" data-open="1" aria-label="View the lounge"><img src="assets/img/lounge-tall.webp" alt="Lounge with a corner couch, cowhide rug and kudu horns" loading="lazy"></button>
+          <button class="bento__cell bento__c" type="button" data-open="2" aria-label="View the dining room"><img src="assets/img/dining-arch-sm.webp" alt="Dining table framed by an archway and bay windows" loading="lazy"></button>
+          <button class="bento__cell bento__d" type="button" data-open="3" aria-label="View a bedroom"><img src="assets/img/bedroom-two.webp" alt="Double bedroom with yellow cushions and a timber headboard" loading="lazy"></button>
+          <button class="bento__cell bento__e" type="button" data-open="4" aria-label="View the bunk room"><img src="assets/img/bunk-room-sm.webp" alt="Bedroom with a bunk bed under a ceiling fan" loading="lazy"></button>
+          <button class="bento__cell bento__f" type="button" data-open="5" aria-label="View the kitchen"><img src="assets/img/kitchen-lounge.webp" alt="Open-plan kitchen with sage green cupboards leading to the lounge" loading="lazy"></button>
         </div>
         <button class="link-btn" type="button" data-open="0">Open the full gallery <svg class="i"><use href="assets/icons.svg#i-arrow-up-right"/></svg></button>
       </div>
@@ -209,19 +215,29 @@
           <p>Morning coffee above the treetops, with a wonderful view out to the hills.</p>
         </article>
         <article class="panel">
-          <div class="panel__img"><img src="assets/img/pool.webp" alt="The private pool with loungers and a timber pergola" loading="lazy"></div>
+          <div class="panel__img"><img src="assets/img/pool-floats.webp" alt="The private pool with loungers and pool rings" loading="lazy"></div>
           <h3>The pool</h3>
-          <p>Private and screened, with loungers in the sun and a pergola for shade.</p>
+          <p>Private and screened, with loungers in the sun and a shade sail for the hottest hours.</p>
         </article>
         <article class="panel">
-          <div class="panel__img"><img src="assets/img/house-yard.webp" alt="The front of the house under large shady trees" loading="lazy"></div>
-          <h3>The grounds</h3>
-          <p>Shady trees and room for the kids to explore, right on the edge of the bush.</p>
+          <div class="panel__img"><img src="assets/img/lantern-path.webp" alt="A garden path lit by small lanterns at dusk" loading="lazy"></div>
+          <h3>Evenings</h3>
+          <p>Lanterns light the garden path once the sun goes down.</p>
         </article>
         <article class="panel">
-          <div class="panel__img"><img src="assets/img/estate-road-sm.webp" alt="A quiet paved road through the estate towards the hills" loading="lazy"></div>
-          <h3>The estate</h3>
-          <p>Quiet roads for an early walk or a slow drive to look for game.</p>
+          <div class="panel__img"><img src="assets/img/lapa.webp" alt="The covered lapa with wooden tables and roll-down canvas sides" loading="lazy"></div>
+          <h3>The lapa</h3>
+          <p>A covered space with long wooden tables, so the braai goes ahead whatever the weather.</p>
+        </article>
+        <article class="panel">
+          <div class="panel__img"><img src="assets/img/deck-stairs-sm.webp" alt="Timber stairs leading up to the upper deck" loading="lazy"></div>
+          <h3>The upper deck</h3>
+          <p>Climb the stairs for the best view of the trees and the hills beyond.</p>
+        </article>
+        <article class="panel">
+          <div class="panel__img"><img src="assets/img/garden-pool.webp" alt="The garden with aloes, a paved area and the pool" loading="lazy"></div>
+          <h3>The garden</h3>
+          <p>Aloes, shady trees and room for the kids to explore, right on the edge of the bush.</p>
         </article>
       </div>
     </section>
@@ -240,18 +256,38 @@
             <span class="strip__label"><strong>Plains zebra</strong><span>Often seen grazing around the houses in the late afternoon.</span></span>
           </button>
           <button class="strip" type="button" aria-expanded="false">
+            <img src="assets/img/giraffe.webp" alt="A giraffe looking towards the camera between the trees" loading="lazy">
+            <span class="strip__label"><strong>Giraffe</strong><span>Tall neighbours browsing the treetops around Kranspoort.</span></span>
+          </button>
+          <button class="strip" type="button" aria-expanded="false">
+            <img src="assets/img/nyala-house.webp" alt="A male nyala standing beside the bird bath in the garden" loading="lazy">
+            <span class="strip__label"><strong>Nyala</strong><span>Some visitors come right up to the garden for a drink.</span></span>
+          </button>
+          <button class="strip" type="button" aria-expanded="false">
             <img src="assets/img/sable.webp" alt="A sable antelope with long curved horns" loading="lazy">
             <span class="strip__label"><strong>Sable antelope</strong><span>Shy and striking, with sweeping curved horns.</span></span>
           </button>
           <button class="strip" type="button" aria-expanded="false">
-            <img src="assets/img/nyala.webp" alt="A female nyala walking across red earth" loading="lazy">
-            <span class="strip__label"><strong>Nyala</strong><span>Look for the white stripes moving through the thickets.</span></span>
-          </button>
-          <button class="strip" type="button" aria-expanded="false">
-            <img src="assets/img/oriole.webp" alt="A black-headed oriole perched on aloe flowers" loading="lazy">
+            <img src="assets/img/oriole-2.webp" alt="A black-headed oriole calling from a branch" loading="lazy">
             <span class="strip__label"><strong>Birdlife</strong><span>Black-headed orioles in the aloes and plenty more on the feeder.</span></span>
           </button>
         </div>
+      </div>
+    </section>
+
+    <!-- AROUND KRANSPOORT -->
+    <section class="around" id="around" aria-labelledby="around-title">
+      <div class="around__hero" data-zoom>
+        <img class="around__bg" src="assets/img/river-view.webp" alt="A river running between rocky hills below a wooden railing" loading="lazy" data-zoom-img>
+        <div class="around__copy container">
+          <h2 id="around-title" class="h2" data-split>Hills, water and big skies.</h2>
+          <p class="body-lg" data-reveal>Kranspoort is set in the hills around Loskop Dam. Go hiking or cycling, follow the river, and be back on the deck in time for sunset.</p>
+        </div>
+      </div>
+      <div class="container around__row" data-reveal-group>
+        <figure class="around__fig around__fig--wide"><img src="assets/img/dam-sunset.webp" alt="The sun setting over Loskop Dam behind a bare tree" loading="lazy"></figure>
+        <figure class="around__fig"><img src="assets/img/valley-sm.webp" alt="A green valley seen from the hills under a blue sky" loading="lazy"></figure>
+        <figure class="around__fig"><img src="assets/img/sunset-clouds-sm.webp" alt="Pink and orange clouds over the hills at dusk" loading="lazy"></figure>
       </div>
     </section>
 
@@ -263,6 +299,39 @@
       <div class="nights__content container">
         <h2 id="nights-title" class="h2 nights__title" data-split>Warm fires, crisp mornings and starry nights.</h2>
         <p class="body-lg" data-reveal>The lapa and boma are yours for the whole stay. Light the fire, get the braai going and let the bush go quiet around you.</p>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="reviews section" id="reviews" aria-labelledby="reviews-title">
+      <div class="container">
+        <div class="stack-head">
+          <p class="eyebrow" data-reveal>Guest reviews</p>
+          <h2 id="reviews-title" class="h2" data-split>What our guests say.</h2>
+        </div>
+        <div class="reviews__grid" data-reveal-group>
+          <figure class="review review--feature">
+            <div class="review__stars" aria-label="5 out of 5 stars">
+              <svg class="i"><use href="assets/icons.svg#i-star-fill"/></svg><svg class="i"><use href="assets/icons.svg#i-star-fill"/></svg><svg class="i"><use href="assets/icons.svg#i-star-fill"/></svg><svg class="i"><use href="assets/icons.svg#i-star-fill"/></svg><svg class="i"><use href="assets/icons.svg#i-star-fill"/></svg>
+            </div>
+            <blockquote>&ldquo;It is set in just the right place, giving you a feeling of peace and tranquility. I have never felt so relaxed.&rdquo;</blockquote>
+            <figcaption><strong>Lisa Pagel</strong><span>Stayed with her family</span></figcaption>
+          </figure>
+          <figure class="review">
+            <svg class="i review__mark" aria-hidden="true"><use href="assets/icons.svg#i-quotes-fill"/></svg>
+            <blockquote>&ldquo;The accommodation is beautiful, peaceful, and has everything you could possibly need for a comfortable stay.&rdquo;</blockquote>
+            <figcaption><strong>Natasha Blaauw</strong><span>Recommended on Facebook</span></figcaption>
+          </figure>
+          <figure class="review">
+            <svg class="i review__mark" aria-hidden="true"><use href="assets/icons.svg#i-quotes-fill"/></svg>
+            <blockquote>&ldquo;Awesome place to relax and refresh. Book and see for yourself, you will not regret it.&rdquo;</blockquote>
+            <figcaption><strong>Wihan Fourie</strong><span>Recommended on Facebook</span></figcaption>
+          </figure>
+          <figure class="review review--photo" aria-hidden="true">
+            <img src="assets/img/house-deck-sm.webp" alt="" loading="lazy">
+          </figure>
+        </div>
+        <a class="link-btn" href="https://www.facebook.com/profile.php?id=61571127717266&amp;sk=reviews" target="_blank" rel="noopener">Read the reviews on Facebook <svg class="i"><use href="assets/icons.svg#i-arrow-up-right"/></svg></a>
       </div>
     </section>
 
@@ -402,6 +471,7 @@
         <a href="#house">The house</a>
         <a href="#outdoors">Outdoors</a>
         <a href="#wildlife">Wildlife</a>
+        <a href="#reviews">Reviews</a>
         <a href="#rates">Rates</a>
         <a href="#book">Book your stay</a>
       </div>
