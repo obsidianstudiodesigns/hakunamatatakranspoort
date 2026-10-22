@@ -103,15 +103,26 @@
     const top = collapsed ? t + s.height : t;
     return `inset(${top}px ${r}px ${b}px ${l}px round ${rx}px ${rx}px 0px 0px / ${ry}px ${ry}px 0px 0px)`;
   }
+  // offset that centres each photo inside the arch (rather than showing whichever slice of it sits behind the arch)
+  // on phones each photo has its own focal point (data-focus-m, 0 = top, 1 = bottom), e.g. the giraffe's head
+  function archShift(frame) {
+    const h = hero.getBoundingClientRect();
+    const s = slot.getBoundingClientRect();
+    const focus = frame && matchMedia("(max-width: 760px)").matches ? parseFloat(frame.dataset.focusM || 0.5) : 0.5;
+    return { x: s.left + s.width / 2 - (h.left + h.width / 2), y: s.top + s.height / 2 - (h.top + h.height * focus) };
+  }
 
   // cinematic frame sequence inside the window
   const frames = $$("[data-frame]");
   const bars = $$("[data-progress] i");
   const HOLD = 7;
   let current = 0;
+  const smallScreen = matchMedia("(max-width: 760px)");
   function kenBurns(frame) {
     const img = $("img", frame);
-    gsap.fromTo(img, { scale: 1.16, xPercent: parseFloat(frame.dataset.fx || 0), yPercent: parseFloat(frame.dataset.fy || 0) },
+    // phones get a gentler push-in so the portrait photos stay sharp and uncropped
+    const start = smallScreen.matches ? 1.07 : 1.16;
+    gsap.fromTo(img, { scale: start, xPercent: parseFloat(frame.dataset.fx || 0) / (smallScreen.matches ? 3 : 1), yPercent: parseFloat(frame.dataset.fy || 0) / (smallScreen.matches ? 3 : 1) },
       { scale: 1.03, xPercent: 0, yPercent: 0, duration: HOLD + 2.4, ease: "none" });
   }
   function markBars(i) {
@@ -147,6 +158,7 @@
     });
 
     // load: the window rises like the sun, the masthead slides up
+    gsap.set(frames, { x: (i, f) => archShift(f).x, y: (i, f) => archShift(f).y });
     const intro = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.1 });
     intro.fromTo(media, { clipPath: () => archClip(true) }, { clipPath: () => archClip(false), duration: 1.8, ease: "expo.inOut" }, 0)
       .from(".hero__mark-line > span", { yPercent: 105, duration: 1.4, stagger: 0.1 }, 0.2)
@@ -159,16 +171,24 @@
         trigger: hero, start: "top top", end: () => "+=" + window.innerHeight * 1.1,
         pin: true, scrub: 1, invalidateOnRefresh: true,
         onUpdate: (self) => nav.classList.toggle("is-over", self.progress > 0.4),
-        onRefresh: (self) => { if (self.progress === 0 && !intro.isActive()) gsap.set(media, { clipPath: archClip(false) }); },
+        onRefresh: (self) => {
+          if (self.progress !== 0) return;
+          if (!intro.isActive()) gsap.set(media, { clipPath: archClip(false) });
+          gsap.set(frames, { x: (i, f) => archShift(f).x, y: (i, f) => archShift(f).y });
+        },
       },
     });
     open.fromTo(media, { clipPath: () => archClip(false) }, { clipPath: FULL, ease: "power2.inOut", duration: 1, immediateRender: false }, 0)
+      .fromTo(frames, { x: (i, f) => archShift(f).x, y: (i, f) => archShift(f).y }, { x: 0, y: 0, ease: "power2.inOut", duration: 1, immediateRender: false }, 0)
       .to("[data-mark], [data-hero-copy]", { y: -60, opacity: 0, duration: 0.45, ease: "power1.in" }, 0)
       .to("[data-hero-shade]", { opacity: 1, duration: 0.5 }, 0.45)
       .fromTo("[data-sticker]", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)", immediateRender: false }, 0.68)
       .to({}, { duration: 0.2 });
   } else {
-    const place = () => (media.style.clipPath = archClip(false));
+    const place = () => {
+      media.style.clipPath = archClip(false);
+      frames.forEach((f) => { const { x, y } = archShift(f); f.style.transform = `translate(${x}px, ${y}px)`; });
+    };
     place();
     addEventListener("resize", place);
   }

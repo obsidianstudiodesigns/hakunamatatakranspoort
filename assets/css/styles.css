@@ -222,12 +222,12 @@ body.menu-open .nav { color: var(--bone); background: transparent; box-shadow: n
 .hero__frame:nth-child(3) img { object-position: 35% 50%; }
 .hero__shade { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 50%, rgb(12 15 17 / .55), rgb(12 15 17 / .2) 70%), linear-gradient(to top, rgb(12 15 17 / .5), transparent 40%); opacity: 0; pointer-events: none; }
 .hero__sticker {
-  position: absolute; left: 50%; top: 50%; width: min(220px, 46vw);
-  transform: translate(-50%, -50%) scale(.6); opacity: 0;
-  display: grid; justify-items: center; gap: 18px; text-align: center; color: var(--bone); pointer-events: none;
+  position: absolute; inset: 0; margin: auto; width: max-content; height: max-content; max-width: calc(100% - 32px);
+  transform: scale(.6); opacity: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; color: var(--bone); pointer-events: none;
 }
-.hero__sticker .glint { width: 100%; filter: drop-shadow(0 18px 30px rgb(0 0 0 / .35)); }
-.hero__sticker p { margin: 0; font-family: var(--display); font-weight: 800; font-stretch: 75%; text-transform: uppercase; letter-spacing: .14em; font-size: .95rem; white-space: nowrap; }
+.hero__sticker .glint { width: clamp(150px, 40vw, 220px); filter: drop-shadow(0 18px 30px rgb(0 0 0 / .35)); }
+.hero__sticker p { margin: 0; font-family: var(--display); font-weight: 800; font-stretch: 75%; text-transform: uppercase; letter-spacing: .14em; font-size: clamp(.8rem, 2.6vw, .95rem); white-space: nowrap; text-shadow: 0 2px 14px rgb(0 0 0 / .4); }
 .hero__inner {
   position: relative; z-index: 3; min-height: 100dvh;
   display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 4vw, 72px);
@@ -262,6 +262,12 @@ html:not(.js) .hero__media { display: none; }
   .hero__lede { margin-bottom: 22px; }
   .hero__slot { min-height: 34vh; }
   .hero__progress { right: 16px; bottom: 16px; }
+}
+@media (max-width: 760px) {
+  .hero__frame:nth-child(1) img { object-position: 50% 62%; }
+  .hero__frame:nth-child(2) img { object-position: 72% 20%; }
+  .hero__frame:nth-child(3) img { object-position: 50% 30%; }
+  .hero__frame:nth-child(4) img { object-position: 45% 50%; }
 }
 @media (max-width: 520px) {
   .hero__cta .btn { flex: 1 1 auto; }
